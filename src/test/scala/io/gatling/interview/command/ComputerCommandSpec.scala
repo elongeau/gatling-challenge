@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import java.time.LocalDate
 
-class ComputerCommandTest extends AnyWordSpec with Matchers {
+class ComputerCommandSpec extends AnyWordSpec with Matchers {
   "parsing arguments from command line" should {
     "return no command when there is no arguments" in {
       ComputerCommand.parse(List.empty) shouldBe None
@@ -44,7 +44,7 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
         ComputerCommand.parse(
           List("add", "-n", "Mac", "-d", "2021-12-31")
         ) shouldBe Some(
-          Add("Mac", None, Some(LocalDate.parse(("2021-12-31"))))
+          Add("Mac", None, Some(LocalDate.parse("2021-12-31")))
         )
       }
 
@@ -52,7 +52,7 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
         ComputerCommand.parse(
           List("add", "-n", "Mac", "-i", "2021-01-01", "-d", "2021-12-31")
         ) shouldBe Some(
-          Add("Mac", Some(LocalDate.parse("2021-01-01")), Some(LocalDate.parse(("2021-12-31"))))
+          Add("Mac", Some(LocalDate.parse("2021-01-01")), Some(LocalDate.parse("2021-12-31")))
         )
       }
 
@@ -60,7 +60,7 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
         ComputerCommand.parse(
           List("add", "-d", "2021-12-31", "-i", "2021-01-01", "-n", "Mac")
         ) shouldBe Some(
-          Add("Mac", Some(LocalDate.parse("2021-01-01")), Some(LocalDate.parse(("2021-12-31"))))
+          Add("Mac", Some(LocalDate.parse("2021-01-01")), Some(LocalDate.parse("2021-12-31")))
         )
       }
 

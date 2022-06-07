@@ -12,7 +12,7 @@ import java.nio.file.{Files, Path, StandardCopyOption}
 import java.time.{LocalDate, Month}
 import java.util.UUID
 
-class ComputerRepositorySpec extends AsyncFlatSpec with AsyncIOSpec with Matchers {
+class FileComputerRepositorySpec extends AsyncFlatSpec with AsyncIOSpec with Matchers {
 
   private val blocker = Blocker.liftExecutionContext(executionContext)
 
@@ -35,7 +35,7 @@ class ComputerRepositorySpec extends AsyncFlatSpec with AsyncIOSpec with Matcher
 
     temporaryFileResource("computers/computers.json")
       .use { computersFilePath =>
-        val repository = new ComputerRepository[IO](computersFilePath, blocker)
+        val repository = new FileComputerRepository[IO](computersFilePath, blocker)
         repository.fetchAll()
       }
       .asserting { fetchedComputers =>
@@ -46,7 +46,7 @@ class ComputerRepositorySpec extends AsyncFlatSpec with AsyncIOSpec with Matcher
   "ComputerRepository#fetchAll" should "fail if the JSON file is invalid" in {
     temporaryFileResource("computers/computers-invalid.json")
       .use { computersFilePath =>
-        val repository = new ComputerRepository[IO](computersFilePath, blocker)
+        val repository = new FileComputerRepository[IO](computersFilePath, blocker)
         repository.fetchAll()
       }
       .assertThrows[ParsingFailure]

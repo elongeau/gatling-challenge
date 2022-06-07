@@ -1,23 +1,22 @@
 package io.gatling.interview.repository
 
-import io.gatling.interview.model.Computer
 import cats.effect.{Blocker, ContextShift, Sync}
-import io.gatling.interview.repository.ComputerRepository.ComputersFileCharset
+import cats.implicits._
+import io.circe.parser.decode
+import io.gatling.interview.model.Computer
+import io.gatling.interview.repository.FileComputerRepository.ComputersFileCharset
 
 import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.file.{Files, Path, Paths}
 
-import io.circe.parser.decode
-import cats.implicits._
-
-object ComputerRepository {
+object FileComputerRepository {
   val DefaultComputersFilePath: Path = Paths.get("computers.json")
   private val ComputersFileCharset: Charset = StandardCharsets.UTF_8
 }
 
-class ComputerRepository[F[_]: ContextShift](filePath: Path, blocker: Blocker)(implicit
+class FileComputerRepository[F[_]: ContextShift](filePath: Path, blocker: Blocker)(implicit
     F: Sync[F]
-) {
+) extends ComputerRepository[F] {
 
   def fetchAll(): F[Seq[Computer]] =
     for {
@@ -28,7 +27,8 @@ class ComputerRepository[F[_]: ContextShift](filePath: Path, blocker: Blocker)(i
       computers <- F.fromEither(decode[Seq[Computer]](json))
     } yield computers
 
-  def fetch(id: Long): F[Computer] = ???
+  // a lot of improvement can be done here by taking the nth element of the JSON array before decoding it to a Computer
+  def fetch(id: Long): F[Option[Computer]] = ???
 
   def insert(computer: Computer): F[Unit] = ???
 }

@@ -1,12 +1,12 @@
 package io.gatling.interview
 
 import io.gatling.interview.handler.ComputerHandler
-import io.gatling.interview.repository.ComputerRepository
+import io.gatling.interview.repository.FileComputerRepository
 import cats.effect._
 import cats.implicits._
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import io.gatling.interview.command.ComputerCommand
-import io.gatling.interview.console.Console
+import io.gatling.interview.console.SystemConsole
 
 final class App[F[_]: ContextShift: Timer](implicit F: ConcurrentEffect[F]) {
 
@@ -14,8 +14,9 @@ final class App[F[_]: ContextShift: Timer](implicit F: ConcurrentEffect[F]) {
 
   def program(args: List[String]): F[Unit] =
     Blocker[F].use { blocker =>
-      val repository = new ComputerRepository(ComputerRepository.DefaultComputersFilePath, blocker)
-      val console = new Console[F]
+      val repository =
+        new FileComputerRepository(FileComputerRepository.DefaultComputersFilePath, blocker)
+      val console = new SystemConsole[F]
       val handler = new ComputerHandler(repository, console)
 
       for {
