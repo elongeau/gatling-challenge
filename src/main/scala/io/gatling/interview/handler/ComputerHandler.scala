@@ -2,7 +2,7 @@ package io.gatling.interview.handler
 
 import io.gatling.interview.repository.ComputerRepository
 import cats.effect.Sync
-import io.gatling.interview.command.{ComputerCommand, ListComputers}
+import io.gatling.interview.command.{Add, ComputerCommand, ListComputers}
 import io.gatling.interview.console.Console
 import cats.implicits._
 
@@ -25,5 +25,6 @@ class ComputerHandler[F[_]](computerRepository: ComputerRepository[F], console: 
             .mkString("\n")
           _ <- console.println(output)
         } yield ()
+      case Add(name, introduced, discontinued) => F.unit
     }
 }
