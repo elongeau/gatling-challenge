@@ -1,9 +1,9 @@
 package io.gatling.interview.model
 
-import java.time.LocalDate
-
 import io.circe._
 import io.circe.generic.semiauto._
+
+import java.time.LocalDate
 
 object Computer {
   implicit val decoder: Decoder[Computer] = deriveDecoder

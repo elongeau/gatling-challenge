@@ -88,12 +88,14 @@ class FileComputerRepositorySpec extends AsyncWordSpec with AsyncIOSpec with Mat
         temporaryFileResource("computers/computers.json")
           .use { computersFilePath =>
             val repository = new FileComputerRepository[IO](computersFilePath, blocker)
-            repository.insert(newComputer) *> IO.delay(
-              Source.fromFile(computersFilePath.toString).mkString
-            )
+            repository.insert(newComputer) *> IO.delay {
+              val stringSource = Source.fromFile(computersFilePath.toString)
+              val json = stringSource.mkString
+              stringSource.close()
+              json
+            }
           }
           .asserting { json =>
-//            val json = Source.fromFile(path.toString).mkString
             val computers = decode[Seq[Computer]](json)
             computers shouldBe Right(
               Seq(
@@ -121,7 +123,6 @@ class FileComputerRepositorySpec extends AsyncWordSpec with AsyncIOSpec with Mat
           }
       }
     }
-
   }
 
   private def temporaryFileResource(path: String): Resource[IO, Path] =

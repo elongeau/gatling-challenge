@@ -2,8 +2,8 @@ package io.gatling.interview.repository
 
 import cats.effect.{Blocker, ContextShift, Sync}
 import cats.implicits._
-import io.circe.syntax._
 import io.circe.parser.decode
+import io.circe.syntax._
 import io.gatling.interview.model.Computer
 import io.gatling.interview.repository.FileComputerRepository.ComputersFileCharset
 
@@ -41,8 +41,7 @@ class FileComputerRepository[F[_]: ContextShift](filePath: Path, blocker: Blocke
     _ <- blocker.blockOn(F.delay {
       Files.write(
         filePath,
-        json.getBytes(ComputersFileCharset),
-        StandardOpenOption.TRUNCATE_EXISTING
+        json.getBytes(ComputersFileCharset)
       )
     })
   } yield ()

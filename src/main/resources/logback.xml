@@ -6,6 +6,6 @@
     </appender>
     <!-- Configure log level here if needed. -->
     <root level="info">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
