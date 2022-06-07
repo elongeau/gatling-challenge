@@ -40,11 +40,39 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
         )
       }
 
+      """it has an "add", a computer name and a discontinued date arguments""" in {
+        ComputerCommand.parse(
+          List("add", "-n", "Mac", "-d", "2021-12-31")
+        ) shouldBe Some(
+          Add("Mac", None, Some(LocalDate.parse(("2021-12-31"))))
+        )
+      }
+
       """it has an "add", a computer name, an introduced date and a discontinued date arguments""" in {
         ComputerCommand.parse(
           List("add", "-n", "Mac", "-i", "2021-01-01", "-d", "2021-12-31")
         ) shouldBe Some(
           Add("Mac", Some(LocalDate.parse("2021-01-01")), Some(LocalDate.parse(("2021-12-31"))))
+        )
+      }
+
+      """it has an "add", a computer name, an introduced date, a discontinued date arguments in any order""" in {
+        ComputerCommand.parse(
+          List("add", "-d", "2021-12-31", "-i", "2021-01-01", "-n", "Mac")
+        ) shouldBe Some(
+          Add("Mac", Some(LocalDate.parse("2021-01-01")), Some(LocalDate.parse(("2021-12-31"))))
+        )
+      }
+
+      """introduced date is invalid""" in {
+        ComputerCommand.parse(List("add", "-n", "Mac", "-i", "2021-13-01")) shouldBe Some(
+          Add("Mac", None, None)
+        )
+      }
+
+      """discontinued date is invalid""" in {
+        ComputerCommand.parse(List("add", "-n", "Mac", "-d", "2021-13-31")) shouldBe Some(
+          Add("Mac", None, None)
         )
       }
     }
@@ -54,13 +82,21 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
         ComputerCommand.parse(List("add")) shouldBe None
       }
 
-      """introduced date is invalid and no discontinued date""" in {
-        ComputerCommand.parse(List("add", "-n", "Mac", "-i", "2021-13-01")) shouldBe None
+      """it has no "name" argument""" in {
+        ComputerCommand.parse(
+          List("add", "-i", "2021-01-01", "-d", "2021-12-31")
+        ) shouldBe None
       }
 
-      """introduced date is valid and discontinued date is invalid""" in {
+      """it has other argument than name, introduced and discontinued""" in {
         ComputerCommand.parse(
-          List("add", "-n", "Mac", "-i", "2021-01-01", "-d", "2021-13-31")
+          List("add", "-n", "Mac", "-i", "2021-01-01", "-d", "2021-12-31", "-t")
+        ) shouldBe None
+      }
+
+      """it has an odd number of argument""" in {
+        ComputerCommand.parse(
+          List("add", "-n", "Mac", "-i", "2021-01-01", "-d")
         ) shouldBe None
       }
 

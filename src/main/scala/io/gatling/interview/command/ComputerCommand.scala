@@ -6,19 +6,22 @@ import scala.util.Try
 object ComputerCommand {
   def parse(args: List[String]): Option[ComputerCommand] =
     args match {
-      case "list" :: _ => Some(ListComputers)
-      case "add" :: "-n" :: name :: "-i" :: introducedArg :: "-d" :: discontinuedArg :: _ =>
-        for {
-          introduced <- Try(LocalDate.parse(introducedArg)).toOption
-          discontinued <- Try(LocalDate.parse(discontinuedArg)).toOption
-        } yield Add(name, Some(introduced), Some(discontinued))
-      case "add" :: "-n" :: name :: "-i" :: introducedArg :: _ =>
-        for {
-          introduced <- Try(LocalDate.parse(introducedArg)).toOption
-        } yield Add(name, Some(introduced), None)
-      case "add" :: "-n" :: name :: _ => Some(Add(name, None, None))
-      case _                          => None
+      case "list" :: _  => Some(ListComputers)
+      case "add" :: Nil => None
+      case "add" :: rest if rest.size > 6 || rest.size % 2 != 0 || !rest.contains("-n") => None
+      case "add" :: rest =>
+        val name = rest(rest.indexOf("-n") + 1)
+        val introduced = parseDateArgument(rest, "-i")
+        val discontinued = parseDateArgument(rest, "-d")
+        Some(Add(name, introduced, discontinued))
+      case _ => None
     }
+
+  private def parseDateArgument(arguments: List[String], argument: String): Option[LocalDate] = {
+    val argPosition = arguments.indexOf(argument)
+    val rawArgument = arguments(argPosition + 1)
+    Try(LocalDate.parse(rawArgument)).toOption
+  }
 }
 
 sealed trait ComputerCommand
