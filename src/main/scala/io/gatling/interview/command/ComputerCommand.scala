@@ -14,7 +14,8 @@ object ComputerCommand {
         val introduced = parseDateArgument(rest, "-i")
         val discontinued = parseDateArgument(rest, "-d")
         Some(Add(name, introduced, discontinued))
-      case _ => None
+      case "show" :: id :: _ => id.toLongOption.map(Show)
+      case _                 => None
     }
 
   private def parseDateArgument(arguments: List[String], argument: String): Option[LocalDate] = {
@@ -32,3 +33,4 @@ case class Add(
     introduced: Option[LocalDate],
     discontinued: Option[LocalDate]
 ) extends ComputerCommand
+case class Show(id: Long) extends ComputerCommand

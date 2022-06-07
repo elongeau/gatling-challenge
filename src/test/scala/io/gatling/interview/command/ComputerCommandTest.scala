@@ -16,7 +16,7 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
     }
   }
 
-  """handling a "list" argument""" should {
+  """parsing a "list" command""" should {
     "returns a List command" when {
       """it has a single "list" arguments""" in {
         ComputerCommand.parse(List("list")) shouldBe Some(ListComputers)
@@ -28,7 +28,7 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
     }
   }
 
-  """handling an "add" argument""" should {
+  """parsing an "add" command""" should {
     "returns an Add Command" when {
       """it has an "add" and a computer name arguments""" in {
         ComputerCommand.parse(List("add", "-n", "Mac")) shouldBe Some(Add("Mac", None, None))
@@ -100,6 +100,24 @@ class ComputerCommandTest extends AnyWordSpec with Matchers {
         ) shouldBe None
       }
 
+    }
+  }
+
+  """parsing a "show" command""" should {
+    "returns a Show command" when {
+      """it has a "show" argument with a computer ID""" in {
+        ComputerCommand.parse(List("show", "1")) shouldBe Some(Show(1))
+      }
+    }
+
+    "returns no command" when {
+      """it has a "show" only""" in {
+        ComputerCommand.parse(List("show")) shouldBe None
+      }
+
+      """it has a "show" argument with a non numeric ID""" in {
+        ComputerCommand.parse(List("show", "a")) shouldBe None
+      }
     }
   }
 }
